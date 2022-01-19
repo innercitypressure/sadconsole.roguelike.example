@@ -1,3 +1,4 @@
+using GoRogue;
 using GoRogue.MapViews;
 using Roguelike.UI.Infrastructure.Tiles;
 
@@ -16,7 +17,7 @@ public class MapGenerator
     
     public Map GenerateTestMap()
     {
-        _map = new Map("Test Map");
+        _map = new Map("Test Map", 50, 30, 3, Distance.EUCLIDEAN, 3);
 
         PrepareForFloors();
         PrepareForOuterWalls();
