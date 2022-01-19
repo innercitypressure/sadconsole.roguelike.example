@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roguelike.UI", "Roguelike.UI\Roguelike.UI.csproj", "{B4422C75-E0C7-454D-A334-8796B985BEA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roguelike.Models", "Roguelike.Models\Roguelike.Models.csproj", "{A7D52AC4-CBC6-4DB0-8F8D-E1B6DFF7DD22}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{B4422C75-E0C7-454D-A334-8796B985BEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4422C75-E0C7-454D-A334-8796B985BEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4422C75-E0C7-454D-A334-8796B985BEA7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7D52AC4-CBC6-4DB0-8F8D-E1B6DFF7DD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7D52AC4-CBC6-4DB0-8F8D-E1B6DFF7DD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7D52AC4-CBC6-4DB0-8F8D-E1B6DFF7DD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7D52AC4-CBC6-4DB0-8F8D-E1B6DFF7DD22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -3,7 +3,7 @@ using SadConsole.Entities;
 using SadConsole.Input;
 using SadRogue.Primitives;
 using Console = SadConsole.Console;
-using Map = Roguelike.UI.Infrastucture.Map;
+using Map = Roguelike.UI.Infrastructure.Map;
 
 namespace Roguelike.UI;
 
