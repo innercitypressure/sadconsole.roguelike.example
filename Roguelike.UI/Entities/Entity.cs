@@ -1,43 +1,49 @@
-using GoRogue;
 using GoRogue.GameFramework;
 using SadConsole;
 using SadRogue.Primitives;
+using GoRogue;
 using Direction = GoRogue.Direction;
 
-namespace Roguelike.UI.Infrastructure.Tiles;
+namespace Roguelike.UI.Entities;
 
-public class BaseTile : ColoredGlyph, IGameObject
+public class Entity : SadConsole.Entities.Entity, IGameObject
 {
-    private readonly IGameObject backingField;
-    public bool IsBlockingMove { get; set; }
+    public uint ID { get; }
     public int Layer { get; set; }
-    public ColoredGlyph LastSeenAppearance { get; set; }
-    public GoRogue.GameFramework.Map CurrentMap { get; }
+    public Map CurrentMap { get; }
     public bool IsStatic { get; }
     public bool IsTransparent { get; set; }
     public bool IsWalkable { get; set; }
     public Coord Position { get; set; }
-    public event EventHandler<ItemMovedEventArgs<IGameObject>>? Moved;
-    public string Name { get; set; }
+    public IGameObject BackingField { get; set; }
     
-    protected BaseTile(Color foregroud, Color background, int glyph, int layer,
-        Coord position, string idOfMaterial, bool blocksMove = true,
-        bool isTransparent = true, string name = "ForgotToChangeName") : base(foregroud, background, glyph)
+    public event EventHandler<ItemMovedEventArgs<IGameObject>>? Moved;
+    
+    private void Position_Changed(object? sender, ValueChangedEventArgs<Point> e)
+        => Moved?.Invoke(sender, new ItemMovedEventArgs<IGameObject>(this, new Coord(e.OldValue.X, e.OldValue.Y), new Coord(e.NewValue.X, e.NewValue.Y)));
+    
+    public Entity(Color foreground, Color background, int glyph, int zIndex, Point coord) : base(foreground, background, glyph, zIndex)
     {
-        IsBlockingMove = blocksMove;
-        Name = name;
-        Layer = layer;
-        backingField = new GameObject(position, layer, this, isTransparent);
-        LastSeenAppearance = new ColoredGlyph(Foreground, Background, Glyph)
-        {
-            IsVisible = false
-        };
+        InitializeObject(foreground, background, glyph, zIndex, coord);
     }
+    
+    private void InitializeObject(
+        Color foreground, Color background, int glyph, int layer, Point coord)
+    {
+        Appearance.Foreground = foreground;
+        Appearance.Background = background;
+        Appearance.Glyph = glyph;
+        Layer = layer;
 
-    public uint ID { get; }
+        BackingField = new GameObject(new Coord(coord.X, coord.Y), layer, this);
+        Position = BackingField.Position;
+
+        PositionChanged += Position_Changed;
+    }
+    
     public void AddComponent(object component)
     {
-        throw new NotImplementedException();
+        BackingField.AddComponent(component);
     }
 
     public T GetComponent<T>()
@@ -80,8 +86,8 @@ public class BaseTile : ColoredGlyph, IGameObject
         throw new NotImplementedException();
     }
 
-    public void OnMapChanged(GoRogue.GameFramework.Map newMap)
+    public void OnMapChanged(Map newMap)
     {
-        throw new NotImplementedException();
+        BackingField.OnMapChanged(newMap);
     }
 }

@@ -1,6 +1,7 @@
 using GoRogue;
 using GoRogue.GameFramework;
 using GoRogue.MapViews;
+using SadRogue.Primitives;
 
 namespace Roguelike.UI.Interface.Windows;
 
