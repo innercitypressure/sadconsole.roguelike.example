@@ -1,87 +1,257 @@
 using GoRogue;
+using GoRogue.Components;
 using GoRogue.GameFramework;
 using SadConsole;
 using SadRogue.Primitives;
-using Direction = GoRogue.Direction;
 
 namespace Roguelike.UI.Infrastructure.Tiles;
 
-public class BaseTile : ColoredGlyph, IGameObject
-{
-    private readonly IGameObject backingField;
-    public bool IsBlockingMove { get; set; }
-    public int Layer { get; set; }
-    public ColoredGlyph LastSeenAppearance { get; set; }
-    public GoRogue.GameFramework.Map CurrentMap { get; }
-    public bool IsStatic { get; }
-    public bool IsTransparent { get; set; }
-    public bool IsWalkable { get; set; }
-    public Coord Position { get; set; }
-    public event EventHandler<ItemMovedEventArgs<IGameObject>>? Moved;
-    public string Name { get; set; }
-    
-    protected BaseTile(Color foregroud, Color background, int glyph, int layer,
-        Coord position, string idOfMaterial, bool blocksMove = true,
-        bool isTransparent = true, string name = "ForgotToChangeName") : base(foregroud, background, glyph)
+// need to separate the TileBase from the ColoredGlyph object
+    public abstract class BaseTile : ColoredGlyph, IGameObject
     {
-        IsBlockingMove = blocksMove;
-        Name = name;
-        Layer = layer;
-        backingField = new GameObject(position, layer, this, isTransparent);
-        LastSeenAppearance = new ColoredGlyph(Foreground, Background, Glyph)
+        private int _tileHealth;
+        private readonly IGameObject backingField;
+        private int _infusedMp;
+
+        // Movement and Line of Sight Flags
+        /// <summary>
+        /// It's really complicated the relation between IsBlockingMove and the IsWalkable field from the backing field, but
+        /// it can be said that IsWalkable = !IsBlockingMove.
+        /// </summary>
+        public bool IsBlockingMove { get; set; }
+        public int Layer { get; set; }
+
+        public ColoredGlyph LastSeenAppereance { get; set; }
+
+        // Creates a list of possible materials, and then assings it to the tile, need to move it to a fitting area, like
+        // World or GameLoop, because if need to port, every new object will have more than one possible material without
+        // any need.
+        // public MaterialTemplate MaterialOfTile { get; set; }
+
+        // TOOD: Add a way to mine terrain, to make the tile health drop to zero and give some item.
+        /// <summary>
+        /// The health of the tile, if it gets to zero, the tiles gets destroyed and becomes a floor of the same material
+        /// , a way to abstract the debris
+        /// </summary>
+        public int TileHealth
         {
-            IsVisible = false
-        };
-    }
+            get => _tileHealth;
 
-    public uint ID { get; }
-    public void AddComponent(object component)
-    {
-        throw new NotImplementedException();
-    }
+            set
+            {
+                if (value <= 0)
+                {
+                    _tileHealth = 0;
+                    //_destroyed = true;
+                }
+                _tileHealth = value;
+            }
+        }
 
-    public T GetComponent<T>()
-    {
-        throw new NotImplementedException();
-    }
+        // Tile's name
+        public string Name { get; set; }
 
-    public IEnumerable<T> GetComponents<T>()
-    {
-        throw new NotImplementedException();
-    }
+        /*
+        public int InfusedMp
+        {
+            get
+            {
+                return _infusedMp;
+            }
 
-    public bool HasComponent(Type componentType)
-    {
-        throw new NotImplementedException();
-    }
+            set
+            {
+                if (MaterialOfTile is not null 
+                    && MaterialOfTile.MPInfusionLimit is not null 
+                    && MaterialOfTile.MPInfusionLimit > 0)
+                {
+                    _infusedMp = value;
+                }
+                else
+                {
+                    _infusedMp = 0;
+                }
+            }
+        }
+        */
 
-    public bool HasComponent<T>()
-    {
-        throw new NotImplementedException();
-    }
+        // TODO: For some future fun stuff!
+        // like continious wall and determining what there is next to it
+        public int BitMask { get; set; }
 
-    public bool HasComponents(params Type[] componentTypes)
-    {
-        throw new NotImplementedException();
-    }
+        #region backingField Data
 
-    public void RemoveComponent(object component)
-    {
-        throw new NotImplementedException();
-    }
+        public GoRogue.GameFramework.Map CurrentMap => backingField.CurrentMap;
 
-    public void RemoveComponents(params object[] components)
-    {
-        throw new NotImplementedException();
-    }
+        public bool IsTransparent { get => backingField.IsTransparent; set => backingField.IsTransparent = value; }
+        public bool IsWalkable { get => !IsBlockingMove; set => IsBlockingMove = !value; }
+        public Point Position { get => backingField.Position; set => backingField.Position = value; }
 
-    public bool MoveIn(Direction direction)
-    {
-        throw new NotImplementedException();
-    }
+        public uint ID => backingField.ID;
 
-    public void OnMapChanged(GoRogue.GameFramework.Map newMap)
-    {
-        throw new NotImplementedException();
+        public IComponentCollection GoRogueComponents => backingField.GoRogueComponents;
+
+        /// <summary>
+        /// How much Move it costs to transverse this tile.\n
+        /// 100 is the norm, it means it takes exactly 100 ticks to go to this tile.\n
+        /// Note that the calculation on how many time it takes is usually MoveTime / Speed.
+        /// </summary>
+        public int MoveTimeCost { get; set; } = 100;
+        public string Description { get; internal set; }
+
+        #endregion backingField Data
+
+        // TileBase is an abstract base class
+        // representing the most basic form of of all Tiles used.
+        // Every TileBase has a Foreground Colour, Background Colour, and Glyph
+        // isBlockingMove and isBlockingSight are optional parameters, set to false by default
+        protected BaseTile(Color foregroud, Color background, int glyph, int layer,
+            Point position, string idOfMaterial, bool blocksMove = true,
+            bool isTransparent = true, string name = "ForgotToChangeName") :
+            base(foregroud, background, glyph)
+        {
+            IsBlockingMove = blocksMove;
+            Name = name;
+            Layer = layer;
+            backingField = new GameObject(position, layer, !blocksMove, isTransparent);
+            // MaterialOfTile = System.Physics.PhysicsManager.SetMaterial(idOfMaterial);
+            LastSeenAppereance = new ColoredGlyph(Foreground, Background, Glyph)
+            {
+                IsVisible = false
+            };
+            /*
+            if (MaterialOfTile is not null)
+                CalculateTileHealth();
+            */
+        }
+
+        protected BaseTile(Color foregroud, Color background, int glyph, int layer,
+            Point position, bool blocksMove = true,
+            bool isTransparent = true, string name = "ForgotToChangeName")
+            : base(foregroud, background, glyph)
+        {
+            IsBlockingMove = blocksMove;
+            Name = name;
+            Layer = layer;
+            backingField = new GameObject(position, layer, !blocksMove, isTransparent);
+            LastSeenAppereance = new ColoredGlyph(Foreground, Background, Glyph)
+            {
+                IsVisible = false
+            };
+        }
+
+        // protected void CalculateTileHealth() => _tileHealth = (int)MaterialOfTile.Density * MaterialOfTile.Hardness;
+
+#nullable enable
+
+        /*public virtual void DestroyTile(BaseTile changeTile, Entities.Item? itemDropped = null)
+#nullable disable
+        {
+            GameLoop.Universe.CurrentMap.SetTerrain(changeTile);
+            LastSeenAppereance = changeTile;
+            if (itemDropped is not null)
+            {
+                GameLoop.Universe.CurrentMap.Add(itemDropped);
+            }
+        }*/
+
+        #region IGameObject Interface
+
+        public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanged
+        {
+            add
+            {
+                backingField.TransparencyChanged += value;
+            }
+
+            remove
+            {
+                backingField.TransparencyChanged -= value;
+            }
+        }
+
+        public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanged
+        {
+            add
+            {
+                backingField.WalkabilityChanged += value;
+            }
+
+            remove
+            {
+                backingField.WalkabilityChanged -= value;
+            }
+        }
+
+        event EventHandler<GameObjectPropertyChanged<Point>> IGameObject.Moved
+        {
+            add
+            {
+                backingField.Moved += value;
+            }
+
+            remove
+            {
+                backingField.Moved -= value;
+            }
+        }
+
+        public event EventHandler<GameObjectCurrentMapChanged> AddedToMap
+        {
+            add
+            {
+                backingField.AddedToMap += value;
+            }
+
+            remove
+            {
+                backingField.AddedToMap -= value;
+            }
+        }
+
+        public event EventHandler<GameObjectCurrentMapChanged> RemovedFromMap
+        {
+            add
+            {
+                backingField.RemovedFromMap += value;
+            }
+
+            remove
+            {
+                backingField.RemovedFromMap -= value;
+            }
+        }
+
+        public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanging
+        {
+            add
+            {
+                backingField.TransparencyChanging += value;
+            }
+
+            remove
+            {
+                backingField.TransparencyChanging -= value;
+            }
+        }
+
+        public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanging
+        {
+            add
+            {
+                backingField.WalkabilityChanging += value;
+            }
+
+            remove
+            {
+                backingField.WalkabilityChanging -= value;
+            }
+        }
+
+        public void OnMapChanged(GoRogue.GameFramework.Map newMap)
+        {
+            backingField.OnMapChanged(newMap);
+        }
+
+        #endregion IGameObject Interface
     }
-}

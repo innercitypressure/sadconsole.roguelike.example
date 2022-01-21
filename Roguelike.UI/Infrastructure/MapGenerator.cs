@@ -1,31 +1,21 @@
-using GoRogue;
-using GoRogue.MapViews;
 using Roguelike.UI.Infrastructure.Tiles;
+using SadRogue.Primitives.GridViews;
 
 namespace Roguelike.UI.Infrastructure;
 
-public class MapGenerator
+public abstract class MapGenerator
 {
-    private readonly Random random = new();
-    
+    protected readonly Random randNum = new();
+    protected Map _map; // Temporarily store the map currently worked on
+
     // Empty constructor
     public MapGenerator()
     {
     }
-    
-    private Map _map; // Temporarily store the map currently worked on
-    
-    public Map GenerateTestMap()
-    {
-        _map = new Map("Test Map", 50, 30, 3, Distance.EUCLIDEAN, 3);
 
-        PrepareForFloors();
-        PrepareForOuterWalls();
+    public MapGenerator(Map map) => _map = map;
 
-        return _map;
-    }
-    
-    private void PrepareForFloors()
+    protected void PrepareForFloors()
     {
         foreach (var pos in _map.Positions())
         {
@@ -33,7 +23,7 @@ public class MapGenerator
         }
     }
     
-    private void PrepareForOuterWalls()
+    protected void PrepareForOuterWalls()
     {
         foreach (var pos in _map.Positions())
         {
@@ -43,4 +33,36 @@ public class MapGenerator
             }
         }
     }
+}
+
+public class GeneralMapGenerator : MapGenerator
+{
+    public GeneralMapGenerator()
+    {
+        // empty
+    }
+
+    public Map GenerateTestMap()
+    {
+        _map = new Map("Test Map");
+
+        PrepareForFloors();
+        PrepareForOuterWalls();
+
+        return _map;
+    }
+
+    public Map GenerateStoneFloorMap()
+    {
+        _map = new Map("Test Stone Map");
+
+        PrepareForFloors();
+
+        return _map;
+    }
+}
+
+public enum RoomTag
+{
+    Generic, Inn, Temple, Blacksmith, Clothier, Alchemist, PlayerHouse, Hovel, Abandoned
 }

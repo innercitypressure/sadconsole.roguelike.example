@@ -16,8 +16,8 @@ public class Wall : BaseTile
     /// <param name="idMaterial"></param>
     /// <param name="blocksMovement"></param>
     /// <param name="tileIsTransparent"></param>
-    public Wall(Coord position, string idMaterial = "stone", bool blocksMovement = true, bool tileIsTransparent = false) :
-        base(Color.LightGray, Color.Transparent, '#', (int)Map.MapLayer.TERRAIN, position, idMaterial, blocksMovement, tileIsTransparent)
+    public Wall(Point position, string idMaterial = "stone", bool blocksMovement = true, bool tileIsTransparent = false) :
+        base(Color.LightGray, Color.Transparent, '#', (int)MapLayer.TERRAIN, position, idMaterial, blocksMovement, tileIsTransparent)
     {
         Name = "Stone Wall";
     }
@@ -33,9 +33,9 @@ public class Wall : BaseTile
     /// <param name="idMaterial"></param>
     /// <param name="blocksMove"></param>
     /// <param name="tileIsTransparent"></param>
-    public Wall(Color foreground, Color background, int glyph, string name, Coord position, string idMaterial,
+    public Wall(Color foreground, Color background, int glyph, string name, Point position, string idMaterial,
         bool blocksMove = true, bool tileIsTransparent = false)
-        : base(foreground, background, glyph, (int)Map.MapLayer.TERRAIN, position, idMaterial, blocksMove,
+        : base(foreground, background, glyph, (int)MapLayer.TERRAIN, position, idMaterial, blocksMove,
             tileIsTransparent, name)
     {
     }
