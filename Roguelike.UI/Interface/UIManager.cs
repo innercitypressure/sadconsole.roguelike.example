@@ -1,5 +1,6 @@
 using Roguelike.UI.Interface.Windows;
 using SadConsole;
+using SadRogue.Primitives;
 
 namespace Roguelike.UI.Interface;
 
@@ -30,6 +31,10 @@ public class UIManager : ScreenObject
         Children.Add(MainMenu);
         MainMenu.Show();
         MainMenu.Position = new Point(0, 0);*/
+        MapWindow = new MapWindow(Program.GameWidth, Program.GameHeight, "SadConsole Example");
+        Children.Add(MapWindow);
+        MapWindow.Show();
+        MapWindow.Position = new Point(0, 0);
     }
     
     // Creates a window that encloses a map console
@@ -39,15 +44,13 @@ public class UIManager : ScreenObject
     // so it is updated and drawn
     public void CreateMapWindow(int width, int height, string title)
     {
-        // TODO: Uncomment to create default MapWindow
-        // MapWindow = new MapWindow(width, height, title);
+        MapWindow = new MapWindow(width, height, title);
 
         // The MapWindow becomes a child console of the UIManager
         Children.Add(MapWindow);
 
         // Add the map console to it
-        // TODO: Uncomment to create the console
-        // MapWindow.CreateMapConsole();
+        MapWindow.CreateMapConsole();
 
         // Without this, the window will never be visible on screen
         MapWindow.Show();
