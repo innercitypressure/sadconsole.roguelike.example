@@ -40,6 +40,10 @@ namespace Roguelike.UI
         private static void Init()
         {
             UIManager = new UIManager();
+            
+            // Now let the UIManager create its consoles
+            // so they can use the World data
+            UIManager.InitMainMenu();
         }
     }
 }
