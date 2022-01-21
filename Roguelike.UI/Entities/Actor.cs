@@ -89,7 +89,7 @@ public class Actor : Entity
         public bool MoveBy(Point positionChange)
         {
             // Check the current map if we can move to this new position
-            if (GameLoop.Universe.CurrentMap.IsTileWalkable(Position + positionChange, this))
+            if (Program.World.CurrentMap.IsTileWalkable(Position + positionChange, this))
             {
                 bool attacked = CheckIfCanAttack(positionChange);
 
@@ -117,11 +117,12 @@ public class Actor : Entity
         {
             // if there's a monster here,
             // do a bump attack
-            Actor actor = GameLoop.Universe.CurrentMap.GetEntityAt<Actor>(Position + positionChange);
+            Actor actor = Program.World.CurrentMap.GetEntityAt<Actor>(Position + positionChange);
 
             if (actor != null && CanBeAttacked)
             {
-                CommandManager.Attack(this, actor);
+                // TODO: Uncomment to attack!
+                // CommandManager.Attack(this, actor);
                 Bumped = true;
                 return Bumped;
             }
@@ -151,7 +152,7 @@ public class Actor : Entity
         // returns true if actor was able to move, false if failed to move
         public bool MoveTo(Point newPosition)
         {
-            if (GameLoop.Universe.CurrentMap.IsTileWalkable(newPosition))
+            if (Program.World.CurrentMap.IsTileWalkable(newPosition))
             {
                 Position = newPosition;
                 return true;
