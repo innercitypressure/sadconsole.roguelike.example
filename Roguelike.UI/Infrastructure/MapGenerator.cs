@@ -1,6 +1,7 @@
 using GoRogue;
-using GoRogue.MapViews;
 using Roguelike.UI.Infrastructure.Tiles;
+using SadRogue.Primitives;
+using SadRogue.Primitives.GridViews;
 
 namespace Roguelike.UI.Infrastructure;
 
@@ -17,7 +18,7 @@ public class MapGenerator
     
     public Map GenerateTestMap()
     {
-        _map = new Map("Test Map", 50, 30, 3, Distance.EUCLIDEAN, 3);
+        // _map = new Map("Test Map", 50, 30, 3, Distance.Euclidean, 3);
 
         PrepareForFloors();
         PrepareForOuterWalls();
