@@ -12,6 +12,7 @@ public class UIManager : ScreenObject
 {
     public MapWindow MapWindow { get; set; }
     public MessageLogWindow MessageLog { get; set; }
+    public StatusWindow StatusConsole { get; set; }
 
     public UIManager()
     {
@@ -29,30 +30,33 @@ public class UIManager : ScreenObject
 
     public void InitMainMenu()
     {
-        /*MainMenu = new MainMenuWindow(GameLoop.GameWidth, GameLoop.GameHeight)
-        {
-            IsFocused = true
-        };
-        Children.Add(MainMenu);
-        MainMenu.Show();
-        MainMenu.Position = new Point(0, 0);*/
         Program.World = new World(Player.TestPlayer(), true);
-
-        CreateMapWindow(Program.GameWidth, Program.GameHeight, "SadConsole Example");
-        Children.Add(MapWindow);
-        MapWindow.Show();
-        MapWindow.IsFocused = true;
-        MapWindow.Position = new Point(0, 0);
-
         IsFocused = true;
+        InitializeNewGame();
+    }
+
+    public void InitializeNewGame()
+    {   
+        //Message Log initialization
+        MessageLog = new MessageLogWindow(Program.GameWidth / 2, Program.GameHeight / 2, "Message Log");
+        Children.Add(MessageLog);
+        MessageLog.Show();
+        MessageLog.Position = new Point(Program.GameWidth / 2, Program.GameHeight / 2);
+        MessageLog.Add("Test message log works");
+        
+        StatusConsole = new StatusWindow(Program.GameWidth / 2, Program.GameHeight / 2, "Status Window");
+        Children.Add(StatusConsole);
+        StatusConsole.Position = new Point(Program.GameWidth / 2, 0);
+        StatusConsole.Show();
+        
+        // Build the Window
+        CreateMapWindow(Program.GameWidth / 2, Program.GameHeight, "Game Map");
 
         // Then load the map into the MapConsole
         MapWindow.LoadMap(Program.World.CurrentMap);
+
+        // Start the game with the camera focused on the player
         MapWindow.CenterOnActor(Program.World.Player);
-        
-        // Program.UIManager.StartGame(Player.TestPlayer(), true);
-        
-        System.Console.WriteLine("Console initialized...");
     }
     
     /// <summary>
@@ -63,14 +67,8 @@ public class UIManager : ScreenObject
     /// <returns></returns>
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard info)
     {
-        if (SadConsole.GameHost.Instance.Keyboard.IsKeyPressed(Keys.Space))
-        {
-            System.Console.WriteLine("wtf is going on...");
-        }
-        
         if (KeyboardHandler.HandleMapKeys(info, this, Program.World))
         {
-            System.Console.WriteLine("Keyboard handles something?");
             return true;
         }
         

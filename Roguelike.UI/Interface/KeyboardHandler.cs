@@ -106,9 +106,7 @@ public static class KeyboardHandler
         }
 
         if (HandleMove(info, world))
-        {
-            System.Console.WriteLine("Key... ");
-            
+        {   
             world.ProcessTurn(TimeHelper.GetWalkTime(GetPlayer,
                 world.CurrentMap.GetTileAt<BaseTile>(GetPlayer.Position)), true);
 
