@@ -2,7 +2,12 @@ namespace Roguelike.UI.Infrastructure.Time;
 
 public enum Phase
 {
-    Blood
+    Blood,
+    Dark,
+    Half,
+    New,
+    Cosmic,
+    Blue
 }
 
 public class MoonPhaseManager
