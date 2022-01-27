@@ -26,7 +26,11 @@ public static class KeyboardHandler
         { Keys.NumPad4, Direction.Left }, { Keys.NumPad6, Direction.Right },
         { Keys.NumPad1, Direction.DownLeft }, { Keys.NumPad2, Direction.Down }, { Keys.NumPad3, Direction.DownRight },
         { Keys.Up, Direction.Up }, { Keys.Down, Direction.Down }, { Keys.Left, Direction.Left },
-        { Keys.Right, Direction.Right }
+        { Keys.Right, Direction.Right },
+        { Keys.Y, Direction.UpLeft} , {Keys.U, Direction.UpRight},
+        { Keys.K, Direction.Up }, { Keys.J, Direction.Down },
+        { Keys.H, Direction.Left},{Keys.L, Direction.Right},
+        { Keys.B, Direction.DownLeft} , {Keys.N, Direction.DownRight}
     };
 
     public static bool HandleMapKeys(Keyboard input, UIManager ui, World world)
