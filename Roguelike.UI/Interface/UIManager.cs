@@ -44,6 +44,8 @@ public class UIManager : ScreenObject
         MapWindow.IsFocused = true;
         MapWindow.Position = new Point(0, 0);
 
+        IsFocused = true;
+
         // Then load the map into the MapConsole
         MapWindow.LoadMap(Program.World.CurrentMap);
         MapWindow.CenterOnActor(Program.World.Player);
@@ -59,8 +61,13 @@ public class UIManager : ScreenObject
     /// </summary>
     /// <param name="info"></param>
     /// <returns></returns>
-    public override bool ProcessKeyboard(Keyboard info)
+    public override bool ProcessKeyboard(SadConsole.Input.Keyboard info)
     {
+        if (SadConsole.GameHost.Instance.Keyboard.IsKeyPressed(Keys.Space))
+        {
+            System.Console.WriteLine("wtf is going on...");
+        }
+        
         if (KeyboardHandler.HandleMapKeys(info, this, Program.World))
         {
             System.Console.WriteLine("Keyboard handles something?");

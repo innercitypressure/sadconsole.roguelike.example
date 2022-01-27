@@ -21,8 +21,8 @@ public static class KeyboardHandler
 
     private static readonly Dictionary<Keys, Direction> MovementDirectionMapping = new Dictionary<Keys, Direction>
     {
-        { Keys.NumPad7, Direction.UpLeft }, { Keys.NumPad8, Direction.Up }, { Keys.NumPad9, Direction.UpRight },
-        { Keys.NumPad7, Direction.UpLeft }, { Keys.NumPad8, Direction.Up }, { Keys.NumPad9, Direction.UpRight },
+        { Keys.NumPad8, Direction.Up }, { Keys.NumPad9, Direction.UpRight },
+        { Keys.NumPad7, Direction.UpLeft },
         { Keys.NumPad4, Direction.Left }, { Keys.NumPad6, Direction.Right },
         { Keys.NumPad1, Direction.DownLeft }, { Keys.NumPad2, Direction.Down }, { Keys.NumPad3, Direction.DownRight },
         { Keys.Up, Direction.Up }, { Keys.Down, Direction.Down }, { Keys.Left, Direction.Left },
@@ -67,11 +67,6 @@ public static class KeyboardHandler
 
             // Must return false, because there isn't any movement of the actor
             return false;
-        }
-
-        if (info.IsKeyDown(Keys.F))
-        {
-            System.Console.WriteLine("Spacfe key");
         }
         
         foreach (Keys key in MovementDirectionMapping.Keys)
