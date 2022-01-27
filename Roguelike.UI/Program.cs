@@ -11,10 +11,10 @@ namespace Roguelike.UI
         public const int GameHeight = 30;
 
         public static UIManager UIManager { get; set; }
-        
+
         public static World World { get; set; }
-        
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             // Pre options before creating the game, defines the title and if can resize
             SadConsole.Settings.WindowTitle = "SadConsole Roguelike Example";
@@ -40,7 +40,7 @@ namespace Roguelike.UI
         private static void Init()
         {
             UIManager = new UIManager();
-            
+
             // Now let the UIManager create its consoles
             // so they can use the World data
             UIManager.InitMainMenu();

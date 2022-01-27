@@ -4,13 +4,15 @@ using Roguelike.UI.Interface.Windows;
 using SadConsole;
 using SadConsole.Input;
 using SadRogue.Primitives;
+using Console = System.Console;
 
 namespace Roguelike.UI.Interface;
 
 public class UIManager : ScreenObject
 {
     public MapWindow MapWindow { get; set; }
-    
+    public MessageLogWindow MessageLog { get; set; }
+
     public UIManager()
     {
         // must be set to true
@@ -24,7 +26,7 @@ public class UIManager : ScreenObject
         // screen that SadConsole processes
         Parent = GameHost.Instance.Screen;
     }
-    
+
     public void InitMainMenu()
     {
         /*MainMenu = new MainMenuWindow(GameLoop.GameWidth, GameLoop.GameHeight)
@@ -35,15 +37,37 @@ public class UIManager : ScreenObject
         MainMenu.Show();
         MainMenu.Position = new Point(0, 0);*/
         Program.World = new World(Player.TestPlayer(), true);
-        
+
         CreateMapWindow(Program.GameWidth, Program.GameHeight, "SadConsole Example");
         Children.Add(MapWindow);
         MapWindow.Show();
+        MapWindow.IsFocused = true;
         MapWindow.Position = new Point(0, 0);
-        
+
         // Then load the map into the MapConsole
         MapWindow.LoadMap(Program.World.CurrentMap);
         MapWindow.CenterOnActor(Program.World.Player);
+        
+        // Program.UIManager.StartGame(Player.TestPlayer(), true);
+        
+        System.Console.WriteLine("Console initialized...");
+    }
+    
+    /// <summary>
+    /// Scans the SadConsole's Global KeyboardState and triggers behaviour
+    /// based on the button pressed.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    public override bool ProcessKeyboard(Keyboard info)
+    {
+        if (KeyboardHandler.HandleMapKeys(info, this, Program.World))
+        {
+            System.Console.WriteLine("Keyboard handles something?");
+            return true;
+        }
+        
+        return base.ProcessKeyboard(info);
     }
     
     // Creates a window that encloses a map console
@@ -63,29 +87,5 @@ public class UIManager : ScreenObject
 
         // Without this, the window will never be visible on screen
         MapWindow.Show();
-    }
-    
-    /// <summary>
-    /// Scans the SadConsole's Global KeyboardState and triggers behaviour
-    /// based on the button pressed.
-    /// </summary>
-    /// <param name="info"></param>
-    /// <returns></returns>
-    public override bool ProcessKeyboard(Keyboard info)
-    {
-        /*if (GameLoop.Universe != null && GameLoop.Universe.CurrentMap != null
-                                      && (GameLoop.Universe.CurrentMap.ControlledEntitiy != null
-                                          || GameLoop.Universe.WorldMap.AssocietatedMap == GameLoop.Universe.CurrentMap))
-        {
-            if (KeyboardHandle.HandleMapKeys(info, this, GameLoop.Universe))
-            {
-                return true;
-            }
-            if (KeyboardHandle.HandleUiKeys(info, this))
-            {
-                return true;
-            }
-        }*/
-        return base.ProcessKeyboard(info);
     }
 }

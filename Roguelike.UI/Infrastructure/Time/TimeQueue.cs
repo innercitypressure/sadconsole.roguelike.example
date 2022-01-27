@@ -13,13 +13,13 @@ public interface ITimeQueue
 
 public class TimeQueue : ITimeQueue
 {
-    public event EventHandler<TimeDefSpan>? TurnPassed;
+    public event EventHandler<TimeDefSpan> TurnPassed;
 
-    private TimeDefSpan TimePassed => new TimeDefSpan(timeSpan.Ticks);
+    public TimeDefSpan TimePassed => new TimeDefSpan(timeSpan.Ticks);
     public int Turns => (int)timeSpan.Seconds;
 
     // Add a priority queue to represent the queue that an actor will act, or a linked dictionary, or whatever
-    private readonly SimplePriorityQueue<ITimeNode, long> turnQueue;
+    private readonly SimplePriorityQueue<ITimeNode, long> turnQueue = new SimplePriorityQueue<ITimeNode, long>();
     private readonly TimeDefSpan timeSpan;
 
     public TimeQueue(long initialTick = 0)

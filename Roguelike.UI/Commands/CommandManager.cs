@@ -42,24 +42,19 @@ public class CommandManager
     }
 
     // TODO: An df inspired menu with body parts located.
-    /// <summary>
-    /// Executes an attack from an attacking actor
-    /// on a defending actor, and then describes
-    /// the outcome of the attack in the Message Log
-    /// </summary>
-    /// <param name="attacker"></param>
-    /// <param name="defender"></param>
-    public static void Attack(Actor attacker, Actor defender)
+    /*public static void Attack(Actor attacker, Actor defender)
     {
-        if (!defender.CanBeAttacked || defender.Anatomy.IsVegetation)
+        // TODO: Remember vegitation
+        // if (!defender.CanBeAttacked || defender.Anatomy.IsVegetation)
+        if (!defender.CanBeAttacked)
             return;
 
-        if (!attacker.Anatomy.HasEnoughArms)
+        /*if (!attacker.Anatomy.HasEnoughArms)
         {
             GameLoop.UIManager.MessageLog.Add
                 ($"The {attacker.Name} doesn't have enough arms to hit {defender.Name}");
             return;
-        }
+        }#1#
 
         // Create two messages that describe the outcome
         // of the attack and defense
@@ -72,13 +67,14 @@ public class CommandManager
         int damage = ResolveDefense(attacker, defender, hits, attackMessage, defenseMessage);
 
         // Display the outcome of the attack & defense
-        GameLoop.UIManager.MessageLog.Add(attackMessage.ToString());
+        // TODO: Rework this
+        /*GameLoop.UIManager.MessageLog.Add(attackMessage.ToString());
         if (!string.IsNullOrWhiteSpace(defenseMessage.ToString()))
             GameLoop.UIManager.MessageLog.Add(defenseMessage.ToString());
 
         // The defender now takes damage
-        ResolveDamage(defender, damage, DamageType.None);
-    }
+        ResolveDamage(defender, damage, DamageType.None);#1#
+    }*/
 
     /// <summary>
     /// Calculates the outcome of an attacker's attempt
@@ -91,7 +87,7 @@ public class CommandManager
     /// <param name="defender"></param>
     /// <param name="attackMessage"></param>
     /// <returns></returns>
-    private static int ResolveHit(Actor attacker, Actor defender, StringBuilder attackMessage)
+    /*private static int ResolveHit(Actor attacker, Actor defender, StringBuilder attackMessage)
     {
         // Create a string that expresses the attacker and defender's names
         int hits = 0;
@@ -108,7 +104,7 @@ public class CommandManager
         }
 
         return hits;
-    }
+    }*/
 
     /// <summary>
     /// Calculates the outcome of a defender's attempt
@@ -121,7 +117,7 @@ public class CommandManager
     /// <param name="attackMessage"></param>
     /// <param name="defenseMessage"></param>
     /// <returns></returns>
-    private static int ResolveDefense(Actor attacker, Actor defender, int hits, StringBuilder attackMessage,
+    /*private static int ResolveDefense(Actor attacker, Actor defender, int hits, StringBuilder attackMessage,
         StringBuilder defenseMessage)
     {
         int totalDamage = 0;
@@ -151,7 +147,7 @@ public class CommandManager
             attackMessage.Append(" and misses completely!");
 
         return totalDamage;
-    }
+    }*/
 
     /// <summary>
     /// Calculates the damage a defender takes after a successful hit
@@ -160,7 +156,7 @@ public class CommandManager
     /// </summary>
     /// <param name="defender"></param>
     /// <param name="damage"></param>
-    private static void ResolveDamage(Actor defender, int damage, DamageType dmgType)
+    /*private static void ResolveDamage(Actor defender, int damage, DamageType dmgType)
     {
         if (damage > 0)
         {
@@ -168,7 +164,7 @@ public class CommandManager
         }
         else
             GameLoop.UIManager.MessageLog.Add($"{defender.Name} blocked all damage!");
-    }
+    }*/
 
     /// <summary>
     /// Removes an Actor that has died
@@ -176,7 +172,7 @@ public class CommandManager
     /// the actor that has died, and the loot they dropped
     /// </summary>
     /// <param name="defender"></param>
-    public static void ResolveDeath(Actor defender)
+    /*public static void ResolveDeath(Actor defender)
     {
         // if the defender can't be killed, do nothing.
         if (!defender.CanBeKilled)
@@ -223,14 +219,14 @@ public class CommandManager
 
         // Now show the deathMessage in the messagelog
         GameLoop.UIManager.MessageLog.Add(deathMessage.ToString());
-    }
+    }*/
 
     /// <summary>
     /// Gets
     /// </summary>
     /// <param name="attacker"></param>
     /// <returns></returns>
-    public static bool DirectAttack(Actor attacker)
+    /*public static bool DirectAttack(Actor attacker)
     {
         // Lists all monsters that are close and their locations
         List<Actor> monsterClose = new List<Actor>();
@@ -259,11 +255,11 @@ public class CommandManager
 
         // default response
         return false;
-    }
+    }*/
 
     // Tries to pick up an Item and add it to the Actor's
     // inventory list
-    public static bool PickUp(Actor actor, Item item)
+    /*public static bool PickUp(Actor actor, Item item)
     {
         // Add the item to the Actor's inventory list
         // and then destroy it
@@ -279,7 +275,7 @@ public class CommandManager
             GameLoop.UIManager.MessageLog.Add("There is no item here");
             return false;
         }
-    }
+    }*/
 
     /// <summary>
     /// Triggered when an Actor attempts to move into a doorway.
@@ -289,12 +285,12 @@ public class CommandManager
     /// <param name="actor"></param>
     /// <param name="door"></param>
     /// <returns></returns>
-    public static bool UseDoor(Actor actor, TileDoor door)
+    /*public static bool UseDoor(Actor actor, Door door)
     {
         // Handle a locked door
         if (door.Locked)
         {
-            GameLoop.UIManager.MessageLog.Add("The door is locked!");
+            Program.UIManager.MessageLog.Add("The door is locked!");
         }
 
         // Handled an unlocked door that is closed
@@ -331,9 +327,9 @@ public class CommandManager
             }
         }
         return false;
-    }
+    }*/
 
-    public static bool DropItems(Actor inv)
+    /*public static bool DropItems(Actor inv)
     {
         if (inv.Inventory.Count == 0)
         {
@@ -393,14 +389,13 @@ public class CommandManager
         }
         GameLoop.World.Player = null;
         GameLoop.World.AllMaps.Clear();
-        GameLoop.World.AllMaps = null;*/
+        GameLoop.World.AllMaps = null;#1#
 
         GameLoop.Universe.WorldMap = new PlanetGenerator().CreatePlanet(500, 500);
     }
+    */
 
-#endif
-
-    public static bool SacrificeLifeEnergyToMana(Actor actor)
+    /*public static bool SacrificeLifeEnergyToMana(Actor actor)
     {
         int maxMana = actor.Stats.BodyStat + actor.Stats.SoulStat + actor.Stats.MindStat;
         if (actor.Stats.PersonalMana != maxMana)
@@ -576,5 +571,5 @@ public class CommandManager
             GameLoop.UIManager.MessageLog.Add("You can't change the map right now!");
             return false;
         }
-    }
+    }*/
 }

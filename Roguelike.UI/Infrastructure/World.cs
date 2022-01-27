@@ -73,4 +73,71 @@ public class World
         // add the player to the Map's collection of Entities
         CurrentMap.Add(Player);
     }
+    
+    private void UpdateIfNeedTheMap(Map mapToGo)
+    {
+        if (mapToGo.NeedsUpdate)
+        {
+            // do something
+        }
+        else
+            return; // Do nothing
+    }
+    
+    public void ProcessTurn(long playerTime, bool success)
+    {
+        if (success)
+        {
+            /*if (Player.Stats.Health <= 0)
+            {
+                RestartGame();
+                return;
+            }*/
+
+            PlayerTimeNode playerTurn = new PlayerTimeNode(Time.TimePassed.Ticks + playerTime);
+            Time.RegisterEntity(playerTurn);
+
+            // Player.Stats.ApplyHpRegen();
+            // Player.Stats.ApplyManaRegen();
+            CurrentMap.PlayerFOV.Calculate(Player.Position, 20);
+
+            var node = Time.NextNode();
+
+            while (node is not PlayerTimeNode)
+            {
+                switch (node)
+                {
+                    case EntityTimeNode entityTurn:
+                        // ProcessAiTurn(entityTurn.EntityId, Time.TimePassed.Ticks);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Unhandled time master node type: {node.GetType()}");
+                }
+
+                node = Time.NextNode();
+            }
+
+            Program.UIManager.MapWindow.MapConsole.IsDirty = true;
+            System.Console.WriteLine("Processing Turns?");
+
+            System.Console.WriteLine($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
+           // Program.UIManager.MessageLog.Add($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
+        }
+    }
+    
+    /*public bool MapIsWorld()
+    {
+        if (CurrentMap == WorldMap.AssocietatedMap)
+            return true;
+        else
+            return false;
+    }*/
+    
+    public void ChangeControlledEntity(Entity entity)
+    {
+        CurrentMap.ControlledEntitiy = entity;
+    }
+    
+    public void ForceChangeCurrentMap(Map map) => CurrentMap = map;
 }

@@ -9,208 +9,176 @@ namespace Roguelike.UI.Entities;
 
 public class Entity : SadConsole.Entities.Entity, IGameObject
 {
-      #region Fields
+    #region Fields
 
-        public uint ID => backingField.ID; // stores the entity's unique identification number
-        public int Layer { get; set; } // stores and sets the layer that the entity is rendered
+    public uint ID => backingField.ID; // stores the entity's unique identification number
+    public int Layer { get; set; } // stores and sets the layer that the entity is rendered
 
-        [DataMember]
-        public float Weight { get; set; }
+    [DataMember] public float Weight { get; set; }
 
-        // [DataMember]
-        // public MaterialTemplate Material { get; set; }
+    // [DataMember]
+    // public MaterialTemplate Material { get; set; }
 
-        [DataMember]
-        public int Size { get; set; }
+    [DataMember] public int Size { get; set; }
 
-        /// <summary>
-        /// Determines whetever the entity leaves an ghost when it leaves the fov
-        /// </summary>
-        public bool LeavesGhost { get; set; } = true;
+    /// <summary>
+    /// Determines whetever the entity leaves an ghost when it leaves the fov
+    /// </summary>
+    public bool LeavesGhost { get; set; } = true;
 
-        [DataMember]
-        public string Description { get; set; }
+    [DataMember] public string Description { get; set; }
 
-        /// <summary>
-        /// Defines if this entity can be killed
-        /// </summary>
-        public bool CanBeKilled { get; set; } = true;
+    /// <summary>
+    /// Defines if this entity can be killed
+    /// </summary>
+    public bool CanBeKilled { get; set; } = true;
 
-        /// <summary>
-        /// Defines if a entity can target or be attacked by this actor
-        /// </summary>
-        public bool CanBeAttacked { get; set; } = true;
+    /// <summary>
+    /// Defines if a entity can target or be attacked by this actor
+    /// </summary>
+    public bool CanBeAttacked { get; set; } = true;
 
-        /// <summary>
-        /// Defines if the entity can interact with it's surrondings
-        /// </summary>
-        public bool CanInteract { get; set; } = true;
+    /// <summary>
+    /// Defines if the entity can interact with it's surrondings
+    /// </summary>
+    public bool CanInteract { get; set; } = true;
 
-        /// <summary>
-        /// Defines if the entity ignores wall and can phase though
-        /// </summary>
-        public bool IgnoresWalls { get; set; }
+    /// <summary>
+    /// Defines if the entity ignores wall and can phase though
+    /// </summary>
+    public bool IgnoresWalls { get; set; }
 
-        #region BackingField fields
+    #region BackingField fields
 
-        public Map CurrentMap => backingField.CurrentMap;
+    public Map CurrentMap => backingField.CurrentMap;
 
-        public bool IsTransparent { get => backingField.IsTransparent; set => backingField.IsTransparent = value; }
-        public bool IsWalkable { get => backingField.IsWalkable; set => backingField.IsWalkable = value; }
-        public IComponentCollection GoRogueComponents => backingField.GoRogueComponents;
+    public bool IsTransparent
+    {
+        get => backingField.IsTransparent;
+        set => backingField.IsTransparent = value;
+    }
 
-        #endregion BackingField fields
+    public bool IsWalkable
+    {
+        get => backingField.IsWalkable;
+        set => backingField.IsWalkable = value;
+    }
 
-        private IGameObject backingField;
+    public IComponentCollection GoRogueComponents => backingField.GoRogueComponents;
 
-        #endregion Fields
+    #endregion BackingField fields
 
-        #region Constructor
+    private IGameObject backingField;
 
-        public Entity(Color foreground, Color background,
-            int glyph, Point coord, int layer) : base(foreground, background, glyph, layer)
-        {
-            InitializeObject(foreground, background, glyph, coord, layer);
-        }
+    #endregion Fields
 
-        #endregion Constructor
+    #region Constructor
 
-        #region Helper Methods
+    public Entity(Color foreground, Color background,
+        int glyph, Point coord, int layer) : base(foreground, background, glyph, layer)
+    {
+        InitializeObject(foreground, background, glyph, coord, layer);
+    }
 
-        private void InitializeObject(
-            Color foreground, Color background, int glyph, Point coord, int layer)
-        {
-            Appearance.Foreground = foreground;
-            Appearance.Background = background;
-            Appearance.Glyph = glyph;
-            Layer = layer;
+    #endregion Constructor
 
-            backingField = new GameObject(coord, layer);
-            Position = backingField.Position;
+    #region Helper Methods
 
-            PositionChanged += Position_Changed;
+    private void InitializeObject(
+        Color foreground, Color background, int glyph, Point coord, int layer)
+    {
+        Appearance.Foreground = foreground;
+        Appearance.Background = background;
+        Appearance.Glyph = glyph;
+        Layer = layer;
 
-            
-            // Material = new MaterialTemplate();
+        backingField = new GameObject(coord, layer);
+        Position = backingField.Position;
 
-            //IsWalkable = false;
-        }
+        PositionChanged += Position_Changed;
 
-#nullable enable
 
-        private void Position_Changed(object? sender, ValueChangedEventArgs<Point> e)
-            => Moved?.Invoke(sender, new GameObjectPropertyChanged<Point>(this, e.OldValue, e.NewValue));
+        // Material = new MaterialTemplate();
 
-#nullable disable
-
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return string.Format($"{nameof(Entity)} : {Name}");
-            }
-        }
-
-        public bool AlwaySeen { get; internal set; }
-
-        #endregion Helper Methods
-
-        #region IGameObject Interface
+        //IsWalkable = false;
+    }
 
 #nullable enable
 
-        public event EventHandler<GameObjectPropertyChanged<Point>>? Moved;
+    private void Position_Changed(object? sender, ValueChangedEventArgs<Point> e)
+        => Moved?.Invoke(sender, new GameObjectPropertyChanged<Point>(this, e.OldValue, e.NewValue));
 
 #nullable disable
 
-        public event EventHandler<GameObjectCurrentMapChanged> AddedToMap
-        {
-            add
-            {
-                backingField.AddedToMap += value;
-            }
+    private string DebuggerDisplay
+    {
+        get { return string.Format($"{nameof(Entity)} : {Name}"); }
+    }
 
-            remove
-            {
-                backingField.AddedToMap -= value;
-            }
-        }
+    public bool AlwaySeen { get; internal set; }
 
-        public event EventHandler<GameObjectCurrentMapChanged> RemovedFromMap
-        {
-            add
-            {
-                backingField.RemovedFromMap += value;
-            }
+    #endregion Helper Methods
 
-            remove
-            {
-                backingField.RemovedFromMap -= value;
-            }
-        }
+    #region IGameObject Interface
 
-        public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanging
-        {
-            add
-            {
-                backingField.TransparencyChanging += value;
-            }
+#nullable enable
 
-            remove
-            {
-                backingField.TransparencyChanging -= value;
-            }
-        }
+    public event EventHandler<GameObjectPropertyChanged<Point>>? Moved;
 
-        public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanged
-        {
-            add
-            {
-                backingField.TransparencyChanged += value;
-            }
+#nullable disable
 
-            remove
-            {
-                backingField.TransparencyChanged -= value;
-            }
-        }
+    public event EventHandler<GameObjectCurrentMapChanged> AddedToMap
+    {
+        add { backingField.AddedToMap += value; }
 
-        public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanging
-        {
-            add
-            {
-                backingField.WalkabilityChanging += value;
-            }
+        remove { backingField.AddedToMap -= value; }
+    }
 
-            remove
-            {
-                backingField.WalkabilityChanging -= value;
-            }
-        }
+    public event EventHandler<GameObjectCurrentMapChanged> RemovedFromMap
+    {
+        add { backingField.RemovedFromMap += value; }
 
-        public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanged
-        {
-            add
-            {
-                backingField.WalkabilityChanged += value;
-            }
+        remove { backingField.RemovedFromMap -= value; }
+    }
 
-            remove
-            {
-                backingField.WalkabilityChanged -= value;
-            }
-        }
+    public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanging
+    {
+        add { backingField.TransparencyChanging += value; }
 
-        public void OnMapChanged(Map newMap)
-        {
-            backingField.OnMapChanged(newMap);
-        }
+        remove { backingField.TransparencyChanging -= value; }
+    }
 
-        public void AddComponent(params object[] components)
-        {
-            foreach (object component in components)
-                backingField.GoRogueComponents.Add(component);
-        }
+    public event EventHandler<GameObjectPropertyChanged<bool>> TransparencyChanged
+    {
+        add { backingField.TransparencyChanged += value; }
 
-        #endregion IGameObject Interface
+        remove { backingField.TransparencyChanged -= value; }
+    }
+
+    public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanging
+    {
+        add { backingField.WalkabilityChanging += value; }
+
+        remove { backingField.WalkabilityChanging -= value; }
+    }
+
+    public event EventHandler<GameObjectPropertyChanged<bool>> WalkabilityChanged
+    {
+        add { backingField.WalkabilityChanged += value; }
+
+        remove { backingField.WalkabilityChanged -= value; }
+    }
+
+    public void OnMapChanged(Map newMap)
+    {
+        backingField.OnMapChanged(newMap);
+    }
+
+    public void AddComponent(params object[] components)
+    {
+        foreach (object component in components)
+            backingField.GoRogueComponents.Add(component);
+    }
+
+    #endregion IGameObject Interface
 }

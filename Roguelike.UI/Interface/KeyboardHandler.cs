@@ -1,17 +1,19 @@
 using Newtonsoft.Json;
+using Roguelike.UI;
 using Roguelike.UI.Actors;
 using Roguelike.UI.Commands;
 using Roguelike.UI.Entities;
 using Roguelike.UI.Infrastructure;
 using Roguelike.UI.Infrastructure.Tiles;
 using Roguelike.UI.Infrastructure.Time;
+using Roguelike.UI.Interface;
 using SadConsole.Input;
 using SadRogue.Primitives;
 
 namespace Roguelike.UI.Interface;
 
 public static class KeyboardHandler
-{ 
+{
     private static Player GetPlayer => Program.World.Player;
 
     // TODO: Not ready for target cursors just yet
@@ -20,9 +22,11 @@ public static class KeyboardHandler
     private static readonly Dictionary<Keys, Direction> MovementDirectionMapping = new Dictionary<Keys, Direction>
     {
         { Keys.NumPad7, Direction.UpLeft }, { Keys.NumPad8, Direction.Up }, { Keys.NumPad9, Direction.UpRight },
+        { Keys.NumPad7, Direction.UpLeft }, { Keys.NumPad8, Direction.Up }, { Keys.NumPad9, Direction.UpRight },
         { Keys.NumPad4, Direction.Left }, { Keys.NumPad6, Direction.Right },
         { Keys.NumPad1, Direction.DownLeft }, { Keys.NumPad2, Direction.Down }, { Keys.NumPad3, Direction.DownRight },
-        { Keys.Up, Direction.Up }, { Keys.Down, Direction.Down }, { Keys.Left, Direction.Left }, { Keys.Right, Direction.Right }
+        { Keys.Up, Direction.Up }, { Keys.Down, Direction.Down }, { Keys.Left, Direction.Left },
+        { Keys.Right, Direction.Right }
     };
 
     public static bool HandleMapKeys(Keyboard input, UIManager ui, World world)
@@ -32,15 +36,15 @@ public static class KeyboardHandler
 
         return false;
     }
-    
+
     private static bool HandleMove(Keyboard info, World world)
     {
-        #region WorldMovement
+        var console = Program.UIManager.MapWindow.MapConsole;
 
-        if (CurrentMapIsPlanetView(world))
+        var worldmap = false;
+
+        if (worldmap)
         {
-            var console = Program.UIManager.MapWindow.MapConsole;
-
             if (info.IsKeyDown(Keys.Left))
             {
                 console.ViewPosition = console.ViewPosition.Translate((-1, 0));
@@ -60,19 +64,23 @@ public static class KeyboardHandler
             {
                 console.ViewPosition = console.ViewPosition.Translate((0, +1));
             }
+
             // Must return false, because there isn't any movement of the actor
             return false;
         }
 
-        #endregion WorldMovement
-
+        if (info.IsKeyDown(Keys.F))
+        {
+            System.Console.WriteLine("Spacfe key");
+        }
+        
         foreach (Keys key in MovementDirectionMapping.Keys)
         {
             if (info.IsKeyPressed(key) && world.CurrentMap is not null)
             {
                 Direction moveDirection = MovementDirectionMapping[key];
                 Point coorToMove = new(moveDirection.DeltaX, moveDirection.DeltaY);
-                
+
                 bool success =
                     CommandManager.MoveActorBy((Actor)world.CurrentMap.ControlledEntitiy, coorToMove);
                 return success;
@@ -87,36 +95,48 @@ public static class KeyboardHandler
         // Work around for a > symbol, must be top to not make the char wait
         if (info.IsKeyDown(Keys.LeftShift) && info.IsKeyPressed(Keys.OemPeriod))
         {
-            return CommandManager.EnterDownMovement(GetPlayer.Position);
+            Program.UIManager.MessageLog.Add($"Move up..");
+            // return CommandManager.EnterDownMovement(GetPlayer.Position);
         }
+
         // Work around for a < symbol, must be top to not make the char wait
         if (info.IsKeyDown(Keys.LeftShift) && info.IsKeyPressed(Keys.OemComma))
         {
-            return CommandManager.EnterUpMovement(GetPlayer.Position);
+            Program.UIManager.MessageLog.Add($"Move down..");
+            // return CommandManager.EnterUpMovement(GetPlayer.Position);
         }
+
         if (HandleMove(info, world))
         {
-            if (!GetPlayer.Bumped && world.CurrentMap.ControlledEntitiy is Player)
+            System.Console.WriteLine("Key... ");
+            
+            world.ProcessTurn(TimeHelper.GetWalkTime(GetPlayer,
+                world.CurrentMap.GetTileAt<BaseTile>(GetPlayer.Position)), true);
+
+            /*if (!GetPlayer.Bumped && world.CurrentMap.ControlledEntitiy is Player)
                 world.ProcessTurn(TimeQueue.GetWalkTime(GetPlayer,
                     world.CurrentMap.GetTileAt<TileBase>(GetPlayer.Position)), true);
             else if (world.CurrentMap.ControlledEntitiy is Player)
                 world.ProcessTurn(TimeQueue.GetAttackTime(GetPlayer), true);
-
+                */
             return true;
         }
 
         if (info.IsKeyPressed(Keys.NumPad5) && info.IsKeyDown(Keys.LeftControl))
         {
-            return CommandManager.RestTillFull(GetPlayer);
+            Program.UIManager.MessageLog.Add($"Rest up..");
+            // return CommandManager.RestTillFull(GetPlayer);
         }
 
         if (info.IsKeyPressed(Keys.NumPad5) || info.IsKeyPressed(Keys.OemPeriod))
         {
-            world.ProcessTurn(TimeQueue.Wait, true);
+            world.ProcessTurn(TimeHelper.Wait, true);
             return true;
         }
 
-        if (info.IsKeyPressed(Keys.A))
+        return false;
+
+        /*if (info.IsKeyPressed(Keys.A))
         {
             bool sucess = CommandManager.DirectAttack(world.Player);
             world.ProcessTurn(TimeQueue.GetAttackTime(world.Player), sucess);
@@ -293,5 +313,6 @@ public static class KeyboardHandler
             return true;
         else
             return false;
+    }*/
     }
 }
