@@ -4,10 +4,11 @@ public enum Phase
 {
     Blood,
     Dark,
-    Half,
-    New,
     Cosmic,
-    Blue
+    Blue,
+    Wolf,
+    Storm,
+    Snow
 }
 
 public class MoonPhaseManager
