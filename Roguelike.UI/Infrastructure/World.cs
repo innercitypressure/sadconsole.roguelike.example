@@ -119,10 +119,8 @@ public class World
             }
 
             Program.UIManager.MapWindow.MapConsole.IsDirty = true;
-            System.Console.WriteLine("Processing Turns?");
-
-            System.Console.WriteLine($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
-           // Program.UIManager.MessageLog.Add($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
+            // System.Console.WriteLine($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
+            Program.UIManager.MessageLog.Add($"Turns: {Time.Turns}, Tick: {Time.TimePassed.Ticks}");
         }
     }
     
