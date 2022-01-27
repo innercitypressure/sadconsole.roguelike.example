@@ -6,8 +6,7 @@ using Console = SadConsole.Console;
 namespace Roguelike.UI.Interface.Windows;
 
 public class MapWindow : BaseWindow
-{
-    
+{   
         private Map _mapDisplayed;
         public Console MapConsole { get; set; }
 

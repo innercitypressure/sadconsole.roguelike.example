@@ -44,7 +44,7 @@ public class GeneralMapGenerator : MapGenerator
 
     public Map GenerateTestMap()
     {
-        _map = new Map("Test Map");
+        _map = new Map("WTF KEYBOARD");
 
         PrepareForFloors();
         PrepareForOuterWalls();
